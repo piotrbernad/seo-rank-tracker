@@ -1,0 +1,33 @@
+<div class="min-h-screen flex items-center justify-center">
+  <div class="text-center max-w-md mx-auto px-6">
+    <span class="section-label">Rank Tracker</span>
+    <h1 class="text-3xl font-light text-[oklch(8%_0.005_260)] mt-2 mb-4">
+      SEO Rank Tracker
+    </h1>
+    <p class="text-sm text-[oklch(50%_0.005_260)] mb-10 leading-relaxed">
+      Track your Google search positions across multiple keywords and countries.
+    </p>
+
+    <%= if @current_user do %>
+      <div class="space-y-3">
+        <.link navigate={~p"/dashboard"} class="btn-action btn-action-primary block text-center">
+          Dashboard
+        </.link>
+        <p class="font-mono text-xs text-[oklch(60%_0.005_260)]">
+          {@current_user.email}
+        </p>
+      </div>
+    <% else %>
+      <div class="space-y-3">
+        <.link href={~p"/auth/login"} class="btn-action btn-action-primary block text-center">
+          Sign In
+        </.link>
+        <%= if Application.get_env(:rank_tracker, :dev_routes) do %>
+          <.link href="/dev/login" class="btn-action block text-center">
+            Dev Login
+          </.link>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

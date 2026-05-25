@@ -1,0 +1,188 @@
+@import "tailwindcss" source(none);
+@source "../css";
+@source "../js";
+@source "../../lib/rank_tracker_web";
+
+@plugin "../vendor/heroicons";
+
+@plugin "../vendor/daisyui" {
+  themes: false;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0.003 260);
+  --color-base-200: oklch(95% 0.004 260);
+  --color-base-300: oklch(90% 0.005 260);
+  --color-base-content: oklch(15% 0.005 260);
+  --color-primary: oklch(15% 0.005 260);
+  --color-primary-content: oklch(98% 0.003 260);
+  --color-secondary: oklch(45% 0.008 260);
+  --color-secondary-content: oklch(15% 0.005 260);
+  --color-accent: oklch(45% 0.15 155);
+  --color-accent-content: oklch(98% 0.01 155);
+  --color-neutral: oklch(88% 0.005 260);
+  --color-neutral-content: oklch(30% 0.005 260);
+  --color-info: oklch(45% 0.14 240);
+  --color-info-content: oklch(98% 0.01 240);
+  --color-success: oklch(45% 0.14 155);
+  --color-success-content: oklch(98% 0.01 155);
+  --color-warning: oklch(55% 0.16 75);
+  --color-warning-content: oklch(98% 0.01 75);
+  --color-error: oklch(50% 0.2 25);
+  --color-error-content: oklch(98% 0.01 25);
+  --radius-selector: 0;
+  --radius-field: 0.125rem;
+  --radius-box: 0.125rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+[data-phx-session], [data-phx-teleported-src] { display: contents }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: oklch(97% 0.003 260);
+  color: oklch(25% 0.005 260);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(50% 0.008 260);
+}
+
+.bracket-box {
+  position: relative;
+  padding: 1rem;
+}
+.bracket-box::before,
+.bracket-box::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: oklch(78% 0.005 260);
+}
+.bracket-box::before {
+  top: 0;
+  left: 0;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.bracket-box::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table thead th {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(55% 0.005 260);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid oklch(88% 0.005 260);
+  font-weight: 500;
+}
+.data-table tbody td {
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid oklch(92% 0.003 260);
+  font-size: 0.875rem;
+}
+.data-table tbody tr:hover {
+  background: oklch(95% 0.004 260);
+}
+.data-table tbody tr.row-selected {
+  background: oklch(93% 0.008 240);
+}
+
+.pos-badge {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  display: inline-block;
+}
+.pos-top10 { color: oklch(42% 0.16 155); }
+.pos-top30 { color: oklch(48% 0.14 75); }
+.pos-top50 { color: oklch(45% 0.14 240); }
+.pos-100 { color: oklch(50% 0.2 25); }
+.pos-none { color: oklch(65% 0.005 260); }
+
+.btn-action {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  border: 1px solid oklch(78% 0.005 260);
+  background: transparent;
+  color: oklch(25% 0.005 260);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-action:hover {
+  background: oklch(92% 0.005 260);
+  border-color: oklch(65% 0.005 260);
+}
+.btn-action:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.btn-action-primary {
+  background: oklch(15% 0.005 260);
+  color: oklch(97% 0.003 260);
+  border-color: oklch(15% 0.005 260);
+  font-weight: 500;
+}
+.btn-action-primary:hover {
+  background: oklch(8% 0 0);
+}
+
+.input-field {
+  background: oklch(99% 0.002 260);
+  border: 1px solid oklch(82% 0.005 260);
+  color: oklch(15% 0.005 260);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.input-field:focus {
+  border-color: oklch(55% 0.005 260);
+}
+.input-field::placeholder {
+  color: oklch(65% 0.005 260);
+}
+
+.dotted-separator {
+  border: none;
+  border-top: 1px dotted oklch(85% 0.005 260);
+}
