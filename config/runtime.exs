@@ -47,7 +47,9 @@ end
 config :rank_tracker, :dataforseo_auth_token, System.get_env("DATAFORSEO_AUTH_TOKEN")
 
 if stripe_key = System.get_env("STRIPE_SECRET_KEY") do
-  config :stripity_stripe, api_key: stripe_key
+  config :stripity_stripe,
+    api_key: stripe_key,
+    hackney_opts: [ssl_options: [cacertfile: CAStore.file_path()]]
 end
 
 config :rank_tracker, :stripe_webhook_secret, System.get_env("STRIPE_WEBHOOK_SECRET")
