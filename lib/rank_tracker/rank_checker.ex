@@ -48,11 +48,35 @@ defmodule RankTracker.RankChecker do
     Phoenix.PubSub.subscribe(@pubsub, "rank_checks:#{user_id}")
   end
 
+  @doc """
+  Get the current state for a user: which combos are queued or in-flight.
+  """
+  def get_status(user_id) do
+    GenServer.call(__MODULE__, {:get_status, user_id})
+  end
+
   # GenServer callbacks
 
   @impl true
   def init(state) do
     {:ok, state}
+  end
+
+  @impl true
+  def handle_call({:get_status, user_id}, _from, state) do
+    queued =
+      :queue.to_list(state.queue)
+      |> Enum.filter(&(&1.user_id == user_id))
+      |> Enum.map(& &1.combo_id)
+
+    active =
+      state.active
+      |> Enum.filter(fn {_k, v} -> v.user_id == user_id end)
+      |> Enum.map(fn {k, _v} -> k end)
+
+    total = length(queued) + length(active)
+
+    {:reply, %{queued: queued, active: active, total: total, busy: total > 0}, state}
   end
 
   @impl true
@@ -113,6 +137,8 @@ defmodule RankTracker.RankChecker do
     case :queue.out(state.queue) do
       {{:value, item}, rest} ->
         pid = self()
+
+        broadcast(item.user_id, {:rank_checking, item.combo_id})
 
         Task.Supervisor.start_child(RankTracker.TaskSupervisor, fn ->
           result =

@@ -9,9 +9,13 @@ defmodule RankTrackerWeb.DashboardLive do
   def mount(_params, _session, socket) do
     user_id = socket.assigns.current_user.id
 
-    if connected?(socket) do
-      RankChecker.subscribe(user_id)
-    end
+    status =
+      if connected?(socket) do
+        RankChecker.subscribe(user_id)
+        RankChecker.get_status(user_id)
+      else
+        %{queued: [], active: [], total: 0, busy: false}
+      end
 
     domains = Tracking.list_domains(user_id)
     combinations = Tracking.list_combinations_by_user(user_id)
@@ -24,10 +28,11 @@ defmodule RankTrackerWeb.DashboardLive do
        grouped: grouped,
        new_domain: "",
        selected: MapSet.new(),
-       checking: false,
+       checking: status.busy,
        completed: 0,
-       total: 0,
-       results: %{}
+       total: status.total,
+       results: %{},
+       in_flight: MapSet.new(status.active)
      )}
   end
 
@@ -165,7 +170,18 @@ defmodule RankTrackerWeb.DashboardLive do
                           disabled={@checking}
                         />
                       </td>
-                      <td class="text-[oklch(12%_0.005_260)]">{combo.keyword.text}</td>
+                      <td class="text-[oklch(12%_0.005_260)]">
+                        <span class="flex items-center gap-2">
+                          {combo.keyword.text}
+                          <%= if MapSet.member?(@in_flight, combo.id) do %>
+                            <span
+                              class="inline-block w-3 h-3 border border-[oklch(40%_0.005_260)] border-t-[oklch(12%_0.005_260)] rounded-full animate-spin"
+                              title="Checking..."
+                            >
+                            </span>
+                          <% end %>
+                        </span>
+                      </td>
                       <td class="font-mono text-xs text-[oklch(45%_0.005_260)]">
                         {Locations.get_country_iso(combo.country_code)}
                       </td>
@@ -298,7 +314,14 @@ defmodule RankTrackerWeb.DashboardLive do
 
     case RankChecker.enqueue(user_id, selected_ids) do
       {:ok, _job_id} ->
-        {:noreply, assign(socket, checking: true, completed: 0, total: count, results: %{})}
+        {:noreply,
+         assign(socket,
+           checking: true,
+           completed: 0,
+           total: count,
+           results: %{},
+           in_flight: MapSet.new()
+         )}
 
       {:error, :insufficient_funds} ->
         balance = Billing.get_balance(user_id)
@@ -315,9 +338,20 @@ defmodule RankTrackerWeb.DashboardLive do
 
   # PubSub callbacks from RankChecker
 
+  def handle_info({:rank_checking, combo_id}, socket) do
+    {:noreply, assign(socket, in_flight: MapSet.put(socket.assigns.in_flight, combo_id))}
+  end
+
   def handle_info({:rank_checked, combo_id, result}, socket) do
     results = Map.put(socket.assigns.results, combo_id, result)
-    {:noreply, assign(socket, results: results, completed: socket.assigns.completed + 1)}
+    in_flight = MapSet.delete(socket.assigns.in_flight, combo_id)
+
+    {:noreply,
+     assign(socket,
+       results: results,
+       in_flight: in_flight,
+       completed: socket.assigns.completed + 1
+     )}
   end
 
   def handle_info({:job_started, _job_id, _count}, socket) do
