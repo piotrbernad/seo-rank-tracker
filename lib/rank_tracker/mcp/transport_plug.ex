@@ -12,6 +12,8 @@ defmodule RankTracker.Mcp.TransportPlug do
 
   import Plug.Conn
 
+  require Logger
+
   alias Hermes.MCP.ID
   alias Hermes.MCP.Message
   alias Hermes.Server.Transport.StreamableHTTP
@@ -50,6 +52,9 @@ defmodule RankTracker.Mcp.TransportPlug do
         |> send_resp(202, "{}")
 
       {:ok, response} ->
+        method = if is_map(body), do: body["method"], else: "unknown"
+        Logger.info("[MCP] POST method=#{method} session=#{session_id} response=#{String.slice(to_string(response), 0..500)}")
+
         conn
         |> put_resp_content_type("application/json")
         |> maybe_set_session(session_id)
