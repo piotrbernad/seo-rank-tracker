@@ -29,7 +29,6 @@ defmodule RankTrackerWeb.Router do
     plug :accepts, ["json", "text/event-stream"]
     plug RankTracker.Mcp.AuthPlug
     plug RankTracker.Mcp.AutoInitPlug
-    plug RankTracker.Mcp.DebugPlug
   end
 
   pipeline :oauth_api do
@@ -95,6 +94,6 @@ defmodule RankTrackerWeb.Router do
   scope "/mcp" do
     pipe_through :mcp_api
 
-    forward "/", Hermes.Server.Transport.StreamableHTTP.Plug, server: RankTracker.Mcp.Server
+    forward "/", RankTracker.Mcp.TransportPlug, server: RankTracker.Mcp.Server
   end
 end
