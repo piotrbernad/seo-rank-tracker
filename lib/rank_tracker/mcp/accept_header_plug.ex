@@ -1,10 +1,10 @@
 defmodule RankTracker.Mcp.AcceptHeaderPlug do
   @moduledoc """
-  Ensures the Accept header includes both application/json and text/event-stream,
-  as required by the MCP Streamable HTTP specification (and enforced by Hermes).
+  Normalizes the Accept header for MCP Streamable HTTP requests.
 
-  Some MCP clients (e.g., Claude Code) may only send Accept: application/json,
-  which causes Hermes to reject requests with 406 before tools can be listed.
+  Hermes requires POST requests to include both application/json and
+  text/event-stream. Phoenix's :accepts plug requires a recognized format
+  (like "json") for GET requests. This plug ensures both sides are satisfied.
   """
 
   import Plug.Conn
@@ -14,11 +14,17 @@ defmodule RankTracker.Mcp.AcceptHeaderPlug do
   def call(conn, _opts) do
     accept = get_req_header(conn, "accept") |> List.first("")
 
-    if String.contains?(accept, "application/json") and
-         not String.contains?(accept, "text/event-stream") do
-      put_req_header(conn, "accept", accept <> ", text/event-stream")
-    else
-      conn
+    cond do
+      String.contains?(accept, "application/json") and
+          not String.contains?(accept, "text/event-stream") ->
+        put_req_header(conn, "accept", accept <> ", text/event-stream")
+
+      String.contains?(accept, "text/event-stream") and
+          not String.contains?(accept, "application/json") ->
+        put_req_header(conn, "accept", "application/json, " <> accept)
+
+      true ->
+        conn
     end
   end
 end
