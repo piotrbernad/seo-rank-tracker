@@ -219,7 +219,27 @@ defmodule RankTrackerWeb.DashboardLive do
                           {format_time(latest.checked_at, @timezone)}
                         <% end %>
                       </td>
-                      <td>
+                      <td class="flex items-center gap-1">
+                        <button
+                          phx-click="refresh_one"
+                          phx-value-id={combo.id}
+                          disabled={MapSet.member?(@in_flight, combo.id)}
+                          class="p-1 text-[oklch(50%_0.005_260)] hover:text-[oklch(15%_0.005_260)] transition-colors disabled:opacity-30"
+                          title="Refresh"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                            class={"w-3.5 h-3.5" <> if(MapSet.member?(@in_flight, combo.id), do: " animate-spin", else: "")}
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M13.836 2.477a.75.75 0 0 1 .75.75v3.182a.75.75 0 0 1-.75.75h-3.182a.75.75 0 0 1 0-1.5h1.37A5.25 5.25 0 0 0 2.78 8.25a.75.75 0 0 1-1.5 0 6.75 6.75 0 0 1 11.559-4.741V2.477a.75.75 0 0 1 .997.032ZM2.164 13.523a.75.75 0 0 1-.75-.75v-3.182a.75.75 0 0 1 .75-.75h3.182a.75.75 0 0 1 0 1.5H3.976A5.25 5.25 0 0 0 13.22 7.75a.75.75 0 0 1 1.5 0 6.75 6.75 0 0 1-11.559 4.741v1.032a.75.75 0 0 1-.997-.032Z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </button>
                         <.link
                           navigate={~p"/history/#{combo.id}"}
                           class="btn-action text-[0.625rem] py-1 px-2"
@@ -301,6 +321,18 @@ defmodule RankTrackerWeb.DashboardLive do
       |> MapSet.new()
 
     {:noreply, assign(socket, selected: all_ids)}
+  end
+
+  def handle_event("refresh_one", %{"id" => combo_id}, socket) do
+    user_id = socket.assigns.current_user.id
+
+    case RankChecker.enqueue(user_id, [combo_id]) do
+      {:ok, _job_id} ->
+        {:noreply, assign(socket, checking: true, total: socket.assigns.total + 1)}
+
+      {:error, :insufficient_funds} ->
+        {:noreply, put_flash(socket, :error, "Insufficient funds.")}
+    end
   end
 
   def handle_event("deselect_all", _, socket) do
