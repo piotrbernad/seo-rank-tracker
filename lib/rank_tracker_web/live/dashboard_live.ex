@@ -2,12 +2,17 @@ defmodule RankTrackerWeb.DashboardLive do
   use RankTrackerWeb, :live_view
 
   alias RankTracker.Tracking
-  alias RankTracker.Rankings
   alias RankTracker.Billing
+  alias RankTracker.RankChecker
   alias RankTracker.DataForSeo.Locations
 
   def mount(_params, _session, socket) do
     user_id = socket.assigns.current_user.id
+
+    if connected?(socket) do
+      RankChecker.subscribe(user_id)
+    end
+
     domains = Tracking.list_domains(user_id)
     combinations = Tracking.list_combinations_by_user(user_id)
     grouped = Enum.group_by(combinations, fn c -> c.keyword.domain end)
@@ -291,53 +296,35 @@ defmodule RankTrackerWeb.DashboardLive do
     user_id = socket.assigns.current_user.id
     count = length(selected_ids)
 
-    if not Billing.sufficient_funds?(user_id, count) do
-      balance = Billing.get_balance(user_id)
-      needed = Billing.estimate_cost(count)
+    case RankChecker.enqueue(user_id, selected_ids) do
+      {:ok, _job_id} ->
+        {:noreply, assign(socket, checking: true, completed: 0, total: count, results: %{})}
 
-      {:noreply,
-       put_flash(
-         socket,
-         :error,
-         "Insufficient funds. Need $#{Decimal.round(needed, 4)} but balance is $#{Decimal.round(balance, 2)}. Add funds first."
-       )}
-    else
-      pid = self()
+      {:error, :insufficient_funds} ->
+        balance = Billing.get_balance(user_id)
+        needed = Billing.estimate_cost(count)
 
-      Task.start(fn ->
-        selected_ids
-        |> Task.Supervisor.async_stream_nolink(
-          RankTracker.TaskSupervisor,
-          fn combo_id ->
-            {combo_id, Rankings.check_rank_with_billing(combo_id, user_id)}
-          end,
-          max_concurrency: 3,
-          ordered: false,
-          timeout: 120_000
-        )
-        |> Enum.each(fn
-          {:ok, {combo_id, result}} ->
-            send(pid, {:rank_result, combo_id, result})
-
-          {:exit, reason} ->
-            require Logger
-            Logger.error("Rank check task crashed: #{inspect(reason)}")
-            send(pid, {:rank_result, :unknown, {:error, :task_crashed}})
-        end)
-
-        send(pid, :refresh_complete)
-      end)
-
-      {:noreply, assign(socket, checking: true, completed: 0, total: count, results: %{})}
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           "Insufficient funds. Need $#{Decimal.round(needed, 4)} but balance is $#{Decimal.round(balance, 2)}. Add funds first."
+         )}
     end
   end
 
-  def handle_info({:rank_result, combo_id, result}, socket) do
+  # PubSub callbacks from RankChecker
+
+  def handle_info({:rank_checked, combo_id, result}, socket) do
     results = Map.put(socket.assigns.results, combo_id, result)
     {:noreply, assign(socket, results: results, completed: socket.assigns.completed + 1)}
   end
 
-  def handle_info(:refresh_complete, socket) do
+  def handle_info({:job_started, _job_id, _count}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info({:job_complete, _job_id}, socket) do
     balance = Billing.get_balance(socket.assigns.current_user.id)
 
     {:noreply,
@@ -345,9 +332,6 @@ defmodule RankTrackerWeb.DashboardLive do
      |> assign(checking: false, wallet_balance: balance)
      |> put_flash(:info, "Rank check complete.")}
   end
-
-  def handle_info({ref, _result}, socket) when is_reference(ref), do: {:noreply, socket}
-  def handle_info({:DOWN, _ref, :process, _pid, _reason}, socket), do: {:noreply, socket}
 
   defp reload(socket) do
     user_id = socket.assigns.current_user.id

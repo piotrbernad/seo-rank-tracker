@@ -11,6 +11,7 @@ defmodule RankTracker.Application do
       {DNSCluster, query: Application.get_env(:rank_tracker, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: RankTracker.PubSub},
       {Task.Supervisor, name: RankTracker.TaskSupervisor},
+      RankTracker.RankChecker,
       Hermes.Server.Registry,
       {RankTracker.Mcp.Server, transport: {:streamable_http, [start: true]}},
       RankTrackerWeb.Endpoint
