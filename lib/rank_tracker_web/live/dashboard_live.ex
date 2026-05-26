@@ -305,19 +305,25 @@ defmodule RankTrackerWeb.DashboardLive do
       pid = self()
 
       Task.start(fn ->
-        Task.Supervisor.async_stream_nolink(
+        selected_ids
+        |> Task.Supervisor.async_stream_nolink(
           RankTracker.TaskSupervisor,
-          selected_ids,
           fn combo_id ->
-            result = Rankings.check_rank_with_billing(combo_id, user_id)
-            send(pid, {:rank_result, combo_id, result})
-            result
+            {combo_id, Rankings.check_rank_with_billing(combo_id, user_id)}
           end,
           max_concurrency: 3,
           ordered: false,
           timeout: 120_000
         )
-        |> Stream.run()
+        |> Enum.each(fn
+          {:ok, {combo_id, result}} ->
+            send(pid, {:rank_result, combo_id, result})
+
+          {:exit, reason} ->
+            require Logger
+            Logger.error("Rank check task crashed: #{inspect(reason)}")
+            send(pid, {:rank_result, :unknown, {:error, :task_crashed}})
+        end)
 
         send(pid, :refresh_complete)
       end)
