@@ -64,7 +64,7 @@ defmodule RankTracker.Billing do
 
   # Debit
 
-  def debit_for_rank_check(user_id, combination_id) do
+  def debit_for_rank_check(user_id, check_info) do
     amount = price_per_check()
 
     Repo.transaction(fn ->
@@ -81,14 +81,24 @@ defmodule RankTracker.Billing do
         |> Ecto.Changeset.change(balance: new_balance)
         |> Repo.update!()
 
+        description =
+          "#{check_info.keyword} | #{check_info.country} | #{check_info.domain}"
+
         %Transaction{}
         |> Transaction.changeset(%{
           wallet_id: wallet.id,
           type: "debit",
           amount: amount,
           balance_after: new_balance,
-          description: "Rank check",
-          metadata: %{"combination_id" => combination_id}
+          description: description,
+          metadata: %{
+            "combination_id" => check_info.combination_id,
+            "keyword" => check_info.keyword,
+            "country" => check_info.country,
+            "domain" => check_info.domain,
+            "dataforseo_cost" => Decimal.to_string(@dataforseo_cost),
+            "our_price" => Decimal.to_string(amount)
+          }
         })
         |> Repo.insert!()
       else
@@ -97,7 +107,20 @@ defmodule RankTracker.Billing do
     end)
   end
 
-  def refund_debit(user_id, combination_id) do
+  def update_transaction_with_result(transaction_id, result_data) do
+    Transaction
+    |> Repo.get!(transaction_id)
+    |> Ecto.Changeset.change(
+      metadata:
+        Map.merge(
+          Repo.get!(Transaction, transaction_id).metadata,
+          result_data
+        )
+    )
+    |> Repo.update()
+  end
+
+  def refund_debit(user_id, check_info) do
     amount = price_per_check()
 
     Repo.transaction(fn ->
@@ -113,14 +136,21 @@ defmodule RankTracker.Billing do
       |> Ecto.Changeset.change(balance: new_balance)
       |> Repo.update!()
 
+      description =
+        "Refund: #{check_info.keyword} | #{check_info.country} | #{check_info.domain}"
+
       %Transaction{}
       |> Transaction.changeset(%{
         wallet_id: wallet.id,
         type: "credit",
         amount: amount,
         balance_after: new_balance,
-        description: "Refund: rank check failed",
-        metadata: %{"combination_id" => combination_id}
+        description: description,
+        metadata: %{
+          "combination_id" => check_info.combination_id,
+          "keyword" => check_info.keyword,
+          "reason" => "api_call_failed"
+        }
       })
       |> Repo.insert!()
     end)

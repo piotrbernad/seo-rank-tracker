@@ -15,16 +15,34 @@ defmodule RankTracker.Rankings do
   def check_rank_with_billing(combination_id, user_id) do
     alias RankTracker.Billing
 
-    case Billing.debit_for_rank_check(user_id, combination_id) do
-      {:ok, _transaction} ->
+    combination =
+      TrackedCombination
+      |> Repo.get!(combination_id)
+      |> Repo.preload(keyword: :domain)
+
+    check_info = %{
+      combination_id: combination_id,
+      keyword: combination.keyword.text,
+      country: Locations.get_country_name(combination.country_code),
+      domain: combination.keyword.domain.domain
+    }
+
+    case Billing.debit_for_rank_check(user_id, check_info) do
+      {:ok, transaction} ->
         case check_rank(combination_id) do
           {:ok, result} ->
+            Billing.update_transaction_with_result(transaction.id, %{
+              "position" => result.position,
+              "url" => result.url,
+              "rank_result_id" => result.id
+            })
+
             wallet = Billing.get_wallet(user_id)
             if wallet, do: Billing.maybe_trigger_auto_reload(wallet)
             {:ok, result}
 
           {:error, reason} ->
-            Billing.refund_debit(user_id, combination_id)
+            Billing.refund_debit(user_id, check_info)
             {:error, reason}
         end
 
