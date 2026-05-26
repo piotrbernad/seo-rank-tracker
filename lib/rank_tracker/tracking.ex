@@ -83,11 +83,19 @@ defmodule RankTracker.Tracking do
         join: k in assoc(tc, :keyword),
         join: d in assoc(k, :domain),
         where: d.user_id == ^user_id,
-        preload: [keyword: {k, domain: d}, rank_results: ^latest_results],
-        order_by: [asc: d.domain, asc: k.text, asc: tc.country_code]
+        preload: [keyword: {k, domain: d}, rank_results: ^latest_results]
       )
 
     Repo.all(query)
+    |> Enum.sort_by(fn combo ->
+      pos =
+        case List.first(combo.rank_results) do
+          nil -> 999
+          r -> r.position || 999
+        end
+
+      {combo.keyword.domain.domain, pos, combo.keyword.text}
+    end)
   end
 
   def list_combinations(domain_id) do

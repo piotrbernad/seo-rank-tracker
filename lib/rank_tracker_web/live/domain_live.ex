@@ -157,7 +157,7 @@ defmodule RankTrackerWeb.DomainLive do
                   </td>
                   <td class="text-sm text-base-content/60">
                     <%= if latest do %>
-                      {Calendar.strftime(latest.checked_at, "%Y-%m-%d %H:%M")}
+                      {format_time(latest.checked_at, @timezone, "%Y-%m-%d %H:%M")}
                     <% else %>
                       Never
                     <% end %>

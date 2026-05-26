@@ -54,7 +54,7 @@ defmodule RankTrackerWeb.HistoryLive do
               >
                 <div class="flex items-center gap-4">
                   <div class="text-sm text-base-content/60 w-36">
-                    {Calendar.strftime(result.checked_at, "%Y-%m-%d %H:%M")}
+                    {format_time(result.checked_at, @timezone, "%Y-%m-%d %H:%M")}
                   </div>
                   <div>
                     <span class={position_badge_class(result.position)}>

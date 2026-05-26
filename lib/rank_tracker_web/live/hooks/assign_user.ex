@@ -16,11 +16,19 @@ defmodule RankTrackerWeb.Live.Hooks.AssignUser do
     if user do
       {:ok, wallet} = Billing.get_or_create_wallet(user.id)
 
+      timezone =
+        if connected?(socket) do
+          get_connect_params(socket)["timezone"] || "UTC"
+        else
+          "UTC"
+        end
+
       {:cont,
        assign(socket,
          current_user: user,
          auth_subject: auth_subject,
-         wallet_balance: wallet.balance
+         wallet_balance: wallet.balance,
+         timezone: timezone
        )}
     else
       {:halt, redirect(socket, to: "/")}

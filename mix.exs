@@ -68,7 +68,8 @@ defmodule RankTracker.MixProject do
       {:hermes_mcp, "~> 0.9"},
       {:dotenvy, "~> 0.8"},
       {:castore, "~> 1.0"},
-      {:stripity_stripe, "~> 3.2"}
+      {:stripity_stripe, "~> 3.2"},
+      {:tz, "~> 0.28"}
     ]
   end
 

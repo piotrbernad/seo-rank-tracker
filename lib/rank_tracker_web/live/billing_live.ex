@@ -165,7 +165,7 @@ defmodule RankTrackerWeb.BillingLive do
               <%= for tx <- @transactions do %>
                 <tr>
                   <td class="font-mono text-xs text-[oklch(55%_0.005_260)]">
-                    {Calendar.strftime(tx.inserted_at, "%m/%d %H:%M")}
+                    {format_time(tx.inserted_at, @timezone)}
                   </td>
                   <td>
                     <span class={

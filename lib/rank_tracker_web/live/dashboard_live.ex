@@ -216,7 +216,7 @@ defmodule RankTrackerWeb.DashboardLive do
                       </td>
                       <td class="font-mono text-xs text-[oklch(62%_0.005_260)]">
                         <%= if latest do %>
-                          {Calendar.strftime(latest.checked_at, "%m/%d %H:%M")}
+                          {format_time(latest.checked_at, @timezone)}
                         <% end %>
                       </td>
                       <td>

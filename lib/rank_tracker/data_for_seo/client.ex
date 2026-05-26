@@ -25,7 +25,10 @@ defmodule RankTracker.DataForSeo.Client do
             {"Content-Type", "application/json"}
           ],
           receive_timeout: 60_000,
-          connect_options: [transport_opts: [cacertfile: CAStore.file_path()]]
+          connect_options: [
+            transport_opts: [cacertfile: CAStore.file_path()],
+            protocols: [:http1]
+          ]
         )
 
       case Req.request(request) do

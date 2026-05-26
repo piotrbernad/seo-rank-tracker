@@ -61,12 +61,12 @@ defmodule RankTracker.Billing.Stripe do
       params = %{
         "customer" => customer_id,
         "mode" => "payment",
-        "payment_method_types[0]" => "card",
         "payment_intent_data[setup_future_usage]" => "off_session",
         "line_items[0][price_data][currency]" => "usd",
         "line_items[0][price_data][unit_amount]" => to_string(amount_cents),
         "line_items[0][price_data][product_data][name]" => "SEO Rank Tracker - Wallet Top-up",
         "line_items[0][quantity]" => "1",
+        "allow_promotion_codes" => "true",
         "metadata[wallet_id]" => wallet.id,
         "success_url" => success_url <> "?session_id={CHECKOUT_SESSION_ID}",
         "cancel_url" => cancel_url
