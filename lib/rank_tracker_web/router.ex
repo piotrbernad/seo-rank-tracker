@@ -29,6 +29,7 @@ defmodule RankTrackerWeb.Router do
     plug :accepts, ["json", "text/event-stream"]
     plug RankTracker.Mcp.AuthPlug
     plug RankTracker.Mcp.AutoInitPlug
+    plug RankTracker.Mcp.DebugPlug
   end
 
   pipeline :oauth_api do
