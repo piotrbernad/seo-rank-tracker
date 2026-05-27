@@ -1,12 +1,11 @@
 defmodule RankTracker.Mcp.Tools.ListKeywords do
+  @moduledoc "List keyword+country combinations with latest positions"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.Tracking
   alias RankTracker.DataForSeo.Locations
-
-  def description, do: "List keyword+country combinations with latest positions"
 
   schema do
     field :domain_id, {:required, :string}, description: "ID of the domain to list keywords for"

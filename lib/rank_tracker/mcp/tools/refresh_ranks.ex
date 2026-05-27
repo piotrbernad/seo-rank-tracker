@@ -1,4 +1,5 @@
 defmodule RankTracker.Mcp.Tools.RefreshRanks do
+  @moduledoc "Refresh rankings for all keywords of a domain"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
@@ -7,8 +8,6 @@ defmodule RankTracker.Mcp.Tools.RefreshRanks do
   alias RankTracker.Rankings
   alias RankTracker.Billing
   alias RankTracker.DataForSeo.Locations
-
-  def description, do: "Refresh rankings for all keywords of a domain"
 
   schema do
     field :domain_id, {:required, :string},

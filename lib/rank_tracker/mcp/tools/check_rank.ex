@@ -1,12 +1,11 @@
 defmodule RankTracker.Mcp.Tools.CheckRank do
+  @moduledoc "Live rank check for a single keyword (not stored)"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.DataForSeo.Locations
   alias RankTracker.Rankings
-
-  def description, do: "Live rank check for a single keyword (not stored)"
 
   schema do
     field :keyword, {:required, :string}, description: "The search keyword to check ranking for"

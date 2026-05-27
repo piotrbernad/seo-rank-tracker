@@ -1,12 +1,11 @@
 defmodule RankTracker.Mcp.Tools.GetHistory do
+  @moduledoc "Get ranking history for a keyword+country combination"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.Tracking
   alias RankTracker.DataForSeo.Locations
-
-  def description, do: "Get ranking history for a keyword+country combination"
 
   schema do
     field :combination_id, {:required, :string},

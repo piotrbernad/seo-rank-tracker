@@ -1,11 +1,10 @@
 defmodule RankTracker.Mcp.Tools.ListDomains do
+  @moduledoc "List all tracked domains"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.Tracking
-
-  def description, do: "List all tracked domains"
 
   schema do
   end

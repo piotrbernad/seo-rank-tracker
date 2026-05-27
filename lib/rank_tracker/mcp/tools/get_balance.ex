@@ -1,11 +1,10 @@
 defmodule RankTracker.Mcp.Tools.GetBalance do
+  @moduledoc "Check account wallet balance"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.Billing
-
-  def description, do: "Check account wallet balance"
 
   schema do
   end

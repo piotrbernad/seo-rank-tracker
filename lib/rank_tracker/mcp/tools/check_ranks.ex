@@ -1,12 +1,11 @@
 defmodule RankTracker.Mcp.Tools.CheckRanks do
+  @moduledoc "Live batch rank check for multiple keywords (not stored)"
   use Hermes.Server.Component, type: :tool
 
   alias Hermes.MCP.Error
   alias Hermes.Server.Response
   alias RankTracker.DataForSeo.Locations
   alias RankTracker.Rankings
-
-  def description, do: "Live batch rank check for multiple keywords (not stored)"
 
   schema do
     field :entries, {:required, {:list, :map}},
