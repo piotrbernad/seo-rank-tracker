@@ -6,6 +6,8 @@ defmodule RankTracker.Mcp.Tools.CheckRank do
   alias RankTracker.DataForSeo.Locations
   alias RankTracker.Rankings
 
+  def description, do: "Live rank check for a single keyword (not stored)"
+
   schema do
     field :keyword, {:required, :string}, description: "The search keyword to check ranking for"
 

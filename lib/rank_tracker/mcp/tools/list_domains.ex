@@ -5,6 +5,8 @@ defmodule RankTracker.Mcp.Tools.ListDomains do
   alias Hermes.Server.Response
   alias RankTracker.Tracking
 
+  def description, do: "List all tracked domains"
+
   schema do
   end
 

@@ -5,6 +5,8 @@ defmodule RankTracker.Mcp.Tools.AddDomain do
   alias Hermes.Server.Response
   alias RankTracker.Tracking
 
+  def description, do: "Add a new domain to track"
+
   schema do
     field :domain, {:required, :string}, description: "Domain to track (e.g. 'example.com')"
   end

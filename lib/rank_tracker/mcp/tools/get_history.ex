@@ -6,6 +6,8 @@ defmodule RankTracker.Mcp.Tools.GetHistory do
   alias RankTracker.Tracking
   alias RankTracker.DataForSeo.Locations
 
+  def description, do: "Get ranking history for a keyword+country combination"
+
   schema do
     field :combination_id, {:required, :string},
       description: "ID of the keyword+country combination to get history for"

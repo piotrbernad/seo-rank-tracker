@@ -6,6 +6,8 @@ defmodule RankTracker.Mcp.Tools.CheckRanks do
   alias RankTracker.DataForSeo.Locations
   alias RankTracker.Rankings
 
+  def description, do: "Live batch rank check for multiple keywords (not stored)"
+
   schema do
     field :entries, {:required, {:list, :map}},
       description:

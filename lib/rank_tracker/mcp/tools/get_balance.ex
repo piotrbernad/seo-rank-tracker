@@ -5,6 +5,8 @@ defmodule RankTracker.Mcp.Tools.GetBalance do
   alias Hermes.Server.Response
   alias RankTracker.Billing
 
+  def description, do: "Check account wallet balance"
+
   schema do
   end
 

@@ -8,6 +8,8 @@ defmodule RankTracker.Mcp.Tools.RefreshRanks do
   alias RankTracker.Billing
   alias RankTracker.DataForSeo.Locations
 
+  def description, do: "Refresh rankings for all keywords of a domain"
+
   schema do
     field :domain_id, {:required, :string},
       description:

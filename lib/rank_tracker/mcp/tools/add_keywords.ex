@@ -6,6 +6,8 @@ defmodule RankTracker.Mcp.Tools.AddKeywords do
   alias RankTracker.Tracking
   alias RankTracker.DataForSeo.Locations
 
+  def description, do: "Add keywords and countries to a domain"
+
   schema do
     field :domain_id, {:required, :string}, description: "ID of the domain to add keywords to"
 
