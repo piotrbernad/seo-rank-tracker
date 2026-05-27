@@ -16,11 +16,11 @@ defmodule RankTracker.Mcp.TransportPlug do
 
   alias Hermes.MCP.ID
   alias Hermes.MCP.Message
-  alias Hermes.Server.Transport.StreamableHTTP
 
   require Message
 
   @session_header "mcp-session-id"
+  @request_timeout 60_000
 
   @impl Plug
   def init(opts) do
@@ -44,7 +44,7 @@ defmodule RankTracker.Mcp.TransportPlug do
     session_id = get_session_id(conn, body)
     context = build_context(conn)
 
-    case StreamableHTTP.handle_message(transport, session_id, body, context) do
+    case GenServer.call(transport, {:handle_message, session_id, body, context}, @request_timeout) do
       {:ok, nil} ->
         conn
         |> put_resp_content_type("application/json")
