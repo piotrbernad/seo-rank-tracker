@@ -69,6 +69,8 @@ defmodule RankTrackerWeb.Router do
   scope "/.well-known", RankTrackerWeb do
     pipe_through :oauth_api
     get "/oauth-authorization-server", McpOAuthController, :discovery
+    get "/oauth-protected-resource", McpOAuthController, :protected_resource
+    get "/oauth-protected-resource/*path", McpOAuthController, :protected_resource
   end
 
   scope "/oauth", RankTrackerWeb do

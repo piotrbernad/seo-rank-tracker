@@ -22,6 +22,19 @@ defmodule RankTrackerWeb.McpOAuthController do
     json(conn, metadata)
   end
 
+  def protected_resource(conn, _params) do
+    base_url = RankTrackerWeb.Endpoint.url()
+
+    metadata = %{
+      resource: "#{base_url}/mcp",
+      authorization_servers: [base_url],
+      bearer_methods_supported: ["header"],
+      scopes_supported: ["rank_tracker"]
+    }
+
+    json(conn, metadata)
+  end
+
   def register(conn, params) do
     redirect_uris = params["redirect_uris"] || []
 
