@@ -75,7 +75,8 @@ defmodule RankTracker.Tracking do
     latest_results =
       from(r in RankResult,
         distinct: r.tracked_combination_id,
-        order_by: [desc: r.checked_at]
+        order_by: [desc: r.checked_at],
+        select: [:id, :position, :url, :checked_at, :tracked_combination_id]
       )
 
     query =
@@ -102,7 +103,8 @@ defmodule RankTracker.Tracking do
     latest_results =
       from(r in RankResult,
         distinct: r.tracked_combination_id,
-        order_by: [desc: r.checked_at]
+        order_by: [desc: r.checked_at],
+        select: [:id, :position, :url, :checked_at, :tracked_combination_id]
       )
 
     query =
