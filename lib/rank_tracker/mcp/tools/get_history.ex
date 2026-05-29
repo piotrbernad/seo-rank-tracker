@@ -13,7 +13,8 @@ defmodule RankTracker.Mcp.Tools.GetHistory do
   end
 
   @impl true
-  def execute(%{"combination_id" => combination_id}, frame) do
+  def execute(params, frame) do
+    combination_id = params["combination_id"] || params[:combination_id]
     case get_user(frame) do
       {:ok, _user} ->
         try do

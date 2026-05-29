@@ -11,7 +11,8 @@ defmodule RankTracker.Mcp.Tools.AddDomain do
   end
 
   @impl true
-  def execute(%{"domain" => domain}, frame) do
+  def execute(params, frame) do
+    domain = params["domain"] || params[:domain]
     case get_user(frame) do
       {:ok, user} ->
         case Tracking.create_domain(user.id, domain) do

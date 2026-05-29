@@ -14,58 +14,60 @@ defmodule RankTracker.Mcp.Tools.CheckRanks do
   end
 
   @impl true
-  def execute(%{"entries" => entries}, frame) when is_list(entries) do
-    results =
-      Task.async_stream(
-        entries,
-        fn entry ->
-          keyword = entry["keyword"]
-          country_raw = entry["country"]
+  def execute(params, frame) do
+    entries = params["entries"] || params[:entries]
 
-          with {:ok, country_code} <- Locations.resolve_country(country_raw),
-               {:ok, items} <- Rankings.check_rank_live(keyword, country_code) do
-            top = List.first(items)
+    unless is_list(entries) do
+      {:error, Error.execution("'entries' must be a list of {keyword, country} objects"), frame}
+    else
+      results =
+        Task.async_stream(
+          entries,
+          fn entry ->
+            keyword = entry["keyword"] || entry[:keyword]
+            country_raw = entry["country"] || entry[:country]
 
-            %{
-              keyword: keyword,
-              country: Locations.get_country_name(country_code),
-              position: top && top.position,
-              url: top && top.url,
-              domain: top && top.domain
-            }
-          else
-            {:error, reason} ->
-              %{keyword: keyword, country: country_raw, error: inspect(reason)}
-          end
-        end,
-        max_concurrency: 3,
-        timeout: 120_000
-      )
-      |> Enum.map(fn
-        {:ok, result} -> result
-        {:exit, reason} -> %{error: inspect(reason)}
-      end)
+            with {:ok, country_code} <- Locations.resolve_country(country_raw),
+                 {:ok, items} <- Rankings.check_rank_live(keyword, country_code) do
+              top = List.first(items)
 
-    text =
-      results
-      |> Enum.map(fn
-        %{error: err} = r ->
-          "#{r[:keyword] || "unknown"} (#{r[:country] || "unknown"}): ERROR - #{err}"
+              %{
+                keyword: keyword,
+                country: Locations.get_country_name(country_code),
+                position: top && top.position,
+                url: top && top.url,
+                domain: top && top.domain
+              }
+            else
+              {:error, reason} ->
+                %{keyword: keyword, country: country_raw, error: inspect(reason)}
+            end
+          end,
+          max_concurrency: 3,
+          timeout: 120_000
+        )
+        |> Enum.map(fn
+          {:ok, result} -> result
+          {:exit, reason} -> %{error: inspect(reason)}
+        end)
 
-        r ->
-          pos = r.position || "not found"
-          "#{r.keyword} (#{r.country}): ##{pos} - #{r.domain || "n/a"} - #{r.url || "n/a"}"
-      end)
-      |> Enum.join("\n")
+      text =
+        results
+        |> Enum.map(fn
+          %{error: err} = r ->
+            "#{r[:keyword] || "unknown"} (#{r[:country] || "unknown"}): ERROR - #{err}"
 
-    response =
-      Response.tool()
-      |> Response.text(text)
+          r ->
+            pos = r.position || "not found"
+            "#{r.keyword} (#{r.country}): ##{pos} - #{r.domain || "n/a"} - #{r.url || "n/a"}"
+        end)
+        |> Enum.join("\n")
 
-    {:reply, response, frame}
-  end
+      response =
+        Response.tool()
+        |> Response.text(text)
 
-  def execute(_params, frame) do
-    {:error, Error.execution("'entries' must be a list of {keyword, country} objects"), frame}
+      {:reply, response, frame}
+    end
   end
 end

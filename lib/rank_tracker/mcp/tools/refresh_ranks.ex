@@ -16,7 +16,8 @@ defmodule RankTracker.Mcp.Tools.RefreshRanks do
   end
 
   @impl true
-  def execute(%{"domain_id" => domain_id}, frame) do
+  def execute(params, frame) do
+    domain_id = params["domain_id"] || params[:domain_id]
     case get_user(frame) do
       {:ok, user} ->
         with {:ok, domain} <- fetch_domain(user.id, domain_id) do

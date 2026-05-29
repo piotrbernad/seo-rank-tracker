@@ -17,10 +17,10 @@ defmodule RankTracker.Mcp.Tools.AddKeywords do
   end
 
   @impl true
-  def execute(
-        %{"domain_id" => domain_id, "keywords" => keywords, "countries" => countries},
-        frame
-      ) do
+  def execute(params, frame) do
+    domain_id = params["domain_id"] || params[:domain_id]
+    keywords = params["keywords"] || params[:keywords]
+    countries = params["countries"] || params[:countries]
     case get_user(frame) do
       {:ok, user} ->
         with {:ok, _domain} <- fetch_domain(user.id, domain_id),
