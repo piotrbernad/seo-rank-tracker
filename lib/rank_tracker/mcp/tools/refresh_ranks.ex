@@ -51,8 +51,8 @@ defmodule RankTracker.Mcp.Tools.RefreshRanks do
                         {:error, combo, reason}
                     end
                   end,
-                  max_concurrency: 3,
-                  timeout: 120_000
+                  max_concurrency: 10,
+                  timeout: 30_000
                 )
                 |> Enum.map(fn
                   {:ok, {:ok, combo, result}} ->
