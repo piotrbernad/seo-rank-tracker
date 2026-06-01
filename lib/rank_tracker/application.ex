@@ -13,7 +13,7 @@ defmodule RankTracker.Application do
       {Task.Supervisor, name: RankTracker.TaskSupervisor},
       RankTracker.RankChecker,
       Hermes.Server.Registry,
-      {RankTracker.Mcp.Server, transport: {:streamable_http, [start: true]}},
+      {RankTracker.Mcp.Server, transport: {:streamable_http, [start: true]}, request_timeout: 180_000},
       RankTrackerWeb.Endpoint
     ]
 

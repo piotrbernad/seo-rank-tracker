@@ -20,7 +20,7 @@ defmodule RankTracker.Mcp.TransportPlug do
   require Message
 
   @session_header "mcp-session-id"
-  @request_timeout 60_000
+  @request_timeout 180_000
 
   @impl Plug
   def init(opts) do
