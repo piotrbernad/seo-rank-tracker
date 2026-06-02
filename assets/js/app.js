@@ -46,6 +46,18 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+// Scroll reveal observer for landing page
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("revealed")
+      revealObserver.unobserve(entry.target)
+    }
+  })
+}, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" })
+
+document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el))
+
 // The lines below enable quality of life phoenix_live_reload
 // development features:
 //

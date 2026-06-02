@@ -4,7 +4,7 @@ defmodule RankTracker.Billing do
   alias RankTracker.Repo
   alias RankTracker.Billing.{Wallet, Transaction}
 
-  @margin Decimal.new("1.10")
+  @margin Decimal.new("1.20")
   @dataforseo_cost Decimal.new("0.002")
   @stripe_percent Decimal.new("0.029")
   @stripe_fixed Decimal.new("0.30")
