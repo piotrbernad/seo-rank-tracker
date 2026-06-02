@@ -1,33 +1,383 @@
-<div class="min-h-screen flex items-center justify-center">
-  <div class="text-center max-w-md mx-auto px-6">
-    <span class="section-label">Rank Tracker</span>
-    <h1 class="text-3xl font-light text-[oklch(8%_0.005_260)] mt-2 mb-4">
-      SEO Rank Tracker
+<%!-- Section 1: Hero --%>
+<div class="min-h-[85vh] flex flex-col items-center justify-center px-6">
+  <div class="text-center max-w-2xl mx-auto">
+    <img src={~p"/images/logo.svg"} alt="" class="w-8 h-8 mx-auto mb-6 hero-logo-enter" />
+    <span class="section-label hero-enter hero-delay-1">SEO Rank Tracker</span>
+    <h1 class="text-4xl md:text-5xl font-light text-[oklch(8%_0.005_260)] mt-3 mb-5 tracking-tight leading-tight hero-enter hero-delay-2">
+      The Simplest SEO MCP<br />for AI Agents
     </h1>
-    <p class="text-sm text-[oklch(50%_0.005_260)] mb-10 leading-relaxed">
-      Track your Google search positions across multiple keywords and countries.
+    <p class="text-base text-[oklch(45%_0.005_260)] max-w-lg mx-auto leading-relaxed hero-enter hero-delay-3">
+      Add domains. Manage keywords. Check positions.<br class="hidden md:block" />
+      Your AI agent handles the rest.
     </p>
 
-    <%= if @current_user do %>
-      <div class="space-y-3">
-        <.link navigate={~p"/dashboard"} class="btn-action btn-action-primary block text-center">
-          Dashboard
-        </.link>
-        <p class="font-mono text-xs text-[oklch(60%_0.005_260)]">
-          {@current_user.email}
+    <div class="mt-10 hero-enter hero-delay-4">
+      <%= if @current_user do %>
+        <div class="space-y-3">
+          <.link navigate={~p"/dashboard"} class="btn-action btn-action-primary inline-block px-8 py-3">
+            Dashboard
+          </.link>
+          <p class="font-mono text-xs text-[oklch(60%_0.005_260)]">
+            {@current_user.email}
+          </p>
+        </div>
+      <% else %>
+        <div class="flex gap-3 justify-center flex-wrap">
+          <.link href={~p"/auth/login"} class="btn-action btn-action-primary px-8 py-3">
+            Get Started
+          </.link>
+          <a href="#how-it-works" class="btn-action px-8 py-3">
+            See How It Works
+          </a>
+        </div>
+        <%= if Application.get_env(:rank_tracker, :dev_routes) do %>
+          <div class="mt-3">
+            <.link href="/dev/login" class="btn-action text-xs">
+              Dev Login
+            </.link>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <p class="font-mono text-xs text-[oklch(55%_0.005_260)] mt-8 tracking-wide hero-enter hero-delay-5">
+      $0.0024/check &middot; no subscription &middot; pay only for what you use
+    </p>
+  </div>
+</div>
+
+<%!-- Section 2: Problem Statement --%>
+<div class="py-20 px-6" id="problem">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <span class="section-label">The Problem</span>
+      <h2 class="text-3xl font-light text-[oklch(10%_0.005_260)] mt-3 tracking-tight">
+        You're paying for an entire toolbox<br class="hidden md:block" /> to use one wrench
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bracket-box p-6 reveal reveal-delay-1">
+        <span class="font-mono text-xs uppercase tracking-wider text-[oklch(50%_0.005_260)]">Ahrefs</span>
+        <div class="mt-3">
+          <span class="font-mono text-2xl font-bold price-strikethrough">$99&ndash;999</span>
+          <span class="font-mono text-sm text-[oklch(55%_0.005_260)]">/mo</span>
+        </div>
+        <p class="text-sm text-[oklch(50%_0.005_260)] mt-3 leading-relaxed">
+          Full SEO suite with backlink analysis, site audits, content explorer, and more.
+          You use it to check positions.
         </p>
       </div>
-    <% else %>
-      <div class="space-y-3">
-        <.link href={~p"/auth/login"} class="btn-action btn-action-primary block text-center">
-          Sign In
-        </.link>
-        <%= if Application.get_env(:rank_tracker, :dev_routes) do %>
-          <.link href="/dev/login" class="btn-action block text-center">
-            Dev Login
-          </.link>
-        <% end %>
+
+      <div class="bracket-box p-6 reveal reveal-delay-2">
+        <span class="font-mono text-xs uppercase tracking-wider text-[oklch(50%_0.005_260)]">Ubersuggest</span>
+        <div class="mt-3">
+          <span class="font-mono text-2xl font-bold price-strikethrough">$29&ndash;99</span>
+          <span class="font-mono text-sm text-[oklch(55%_0.005_260)]">/mo</span>
+        </div>
+        <p class="text-sm text-[oklch(50%_0.005_260)] mt-3 leading-relaxed">
+          Keyword research, domain overview, SEO analyzer, and content ideas.
+          You use it to check positions.
+        </p>
       </div>
-    <% end %>
+
+      <div class="bracket-box bracket-box-accent p-6 reveal reveal-delay-3">
+        <span class="font-mono text-xs uppercase tracking-wider text-[oklch(35%_0.005_260)]">SEO Rank Tracker</span>
+        <div class="mt-3">
+          <span class="font-mono text-2xl font-bold text-[oklch(8%_0.005_260)]">$0.0024</span>
+          <span class="font-mono text-sm text-[oklch(45%_0.005_260)]">/check</span>
+        </div>
+        <p class="text-sm text-[oklch(35%_0.005_260)] mt-3 leading-relaxed">
+          Position checking. That's it. That's the tool.
+          Built for AI agents. No features you'll never use.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%!-- Section 3: How It Works --%>
+<div class="py-20 px-6 border-t border-[oklch(92%_0.003_260)]" id="how-it-works">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="section-label">How It Works</span>
+      <h2 class="text-3xl font-light text-[oklch(10%_0.005_260)] mt-3 tracking-tight">
+        Three tools. One conversation.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="step-connector reveal reveal-delay-1">
+        <span class="font-mono text-xs text-[oklch(60%_0.005_260)]">01</span>
+        <h3 class="font-mono text-sm font-medium text-[oklch(12%_0.005_260)] mt-2">
+          add_domain
+        </h3>
+        <p class="text-sm text-[oklch(50%_0.005_260)] mt-2 leading-relaxed">
+          Tell your AI agent which domain to track.
+        </p>
+        <div class="landing-code-block mt-4" phx-no-curly-interpolation>
+          <pre>"Add mysite.com to rank tracker"
+
+> Tool: add_domain
+> domain: "mysite.com"
+
+Domain added successfully.
+ID: 42</pre>
+        </div>
+      </div>
+
+      <div class="step-connector reveal reveal-delay-2">
+        <span class="font-mono text-xs text-[oklch(60%_0.005_260)]">02</span>
+        <h3 class="font-mono text-sm font-medium text-[oklch(12%_0.005_260)] mt-2">
+          add_keywords
+        </h3>
+        <p class="text-sm text-[oklch(50%_0.005_260)] mt-2 leading-relaxed">
+          Set keywords and countries to monitor.
+        </p>
+        <div class="landing-code-block mt-4" phx-no-curly-interpolation>
+          <pre>"Track these keywords in US and UK"
+
+> Tool: add_keywords
+> keywords: ["seo tools", "rank
+    tracker", "serp api"]
+> countries: ["United States",
+    "United Kingdom"]
+
+6 combinations created.</pre>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-3">
+        <span class="font-mono text-xs text-[oklch(60%_0.005_260)]">03</span>
+        <h3 class="font-mono text-sm font-medium text-[oklch(12%_0.005_260)] mt-2">
+          refresh_ranks
+        </h3>
+        <p class="text-sm text-[oklch(50%_0.005_260)] mt-2 leading-relaxed">
+          Get real-time positions from Google SERPs.
+        </p>
+        <div class="landing-code-block mt-4" phx-no-curly-interpolation>
+          <pre>> Tool: refresh_ranks
+> domain_id: 42
+
+"seo tools" (US)     #8
+"seo tools" (UK)     #12
+"rank tracker" (US)  #3
+"rank tracker" (UK)  #5
+"serp api" (US)      #15
+"serp api" (UK)      #21</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%!-- Section 4: MCP Tools Showcase --%>
+<div class="py-20 px-6 border-t border-[oklch(92%_0.003_260)]" id="tools">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <span class="section-label">MCP Tools</span>
+      <h2 class="text-3xl font-light text-[oklch(10%_0.005_260)] mt-3 tracking-tight">
+        9 tools. Complete rank tracking API.
+      </h2>
+    </div>
+
+    <div class="border border-[oklch(88%_0.005_260)] reveal">
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">add_domain</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Add a new domain to track</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">add_keywords</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Add keywords and countries to a domain</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">list_domains</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">List all tracked domains</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">list_keywords</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">List keyword+country combos with latest positions</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">refresh_ranks</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Refresh all rankings for a domain</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">check_rank</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Live rank check for a single keyword</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">check_ranks</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Batch live rank check for multiple keywords</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3 border-b border-[oklch(92%_0.003_260)]">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">get_history</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Get ranking history over time</span>
+      </div>
+      <div class="tool-row flex items-baseline gap-4 px-5 py-3">
+        <code class="font-mono text-xs font-medium text-[oklch(12%_0.005_260)] shrink-0">get_balance</code>
+        <span class="text-sm text-[oklch(50%_0.005_260)]">Check wallet balance and remaining checks</span>
+      </div>
+    </div>
+
+    <p class="font-mono text-xs text-[oklch(55%_0.005_260)] mt-6 text-center reveal">
+      Works with Claude Desktop, Cursor, VS Code, Windsurf, Claude Code, and any MCP client.
+    </p>
+  </div>
+</div>
+
+<%!-- Section 5: Use Cases --%>
+<div class="py-20 px-6 border-t border-[oklch(92%_0.003_260)]" id="use-cases">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-14 reveal">
+      <span class="section-label">Use Cases</span>
+      <h2 class="text-3xl font-light text-[oklch(10%_0.005_260)] mt-3 tracking-tight">
+        Built for how AI agents actually work
+      </h2>
+    </div>
+
+    <div class="space-y-10">
+      <div class="bracket-box p-6 md:p-8 reveal">
+        <span class="section-label">Feedback Loop</span>
+        <h3 class="text-xl font-light text-[oklch(12%_0.005_260)] mt-2">
+          AI agents writing content need a feedback loop
+        </h3>
+        <p class="text-[oklch(40%_0.005_260)] mt-3 leading-relaxed">
+          Your AI agent is optimizing a blog post. It rewrites the title, adjusts the headings,
+          improves the meta description. But how does it know if any of that worked? It calls
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">check_ranks</code>
+          to see where the page currently ranks, then adjusts its content strategy based on real data.
+          No tab-switching. No manual lookups. The agent asks the question, gets the answer, and iterates.
+        </p>
+      </div>
+
+      <div class="bracket-box p-6 md:p-8 reveal">
+        <span class="section-label">Real-Time Data</span>
+        <h3 class="text-xl font-light text-[oklch(12%_0.005_260)] mt-2">
+          Real-time fetch across 35+ countries
+        </h3>
+        <p class="text-[oklch(40%_0.005_260)] mt-3 leading-relaxed">
+          Send a list of keywords and countries, get live SERP positions back concurrently.
+          Not cached data from last week. Not an estimate. Fresh results from Google, right now.
+          The
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">check_ranks</code>
+          tool processes multiple keywords in parallel across 35+ supported countries spanning
+          Europe, the Americas, Asia-Pacific, and the Middle East. Your agent gets the full picture in one call.
+        </p>
+      </div>
+
+      <div class="bracket-box p-6 md:p-8 reveal">
+        <span class="section-label">Autonomous Monitoring</span>
+        <h3 class="text-xl font-light text-[oklch(12%_0.005_260)] mt-2">
+          Set it and let your agent track positions over time
+        </h3>
+        <p class="text-[oklch(40%_0.005_260)] mt-3 leading-relaxed">
+          The stored tracking workflow is simple:
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">add_domain</code>,
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">add_keywords</code>,
+          then
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">refresh_ranks</code>
+          on a schedule. The agent builds up historical data through
+          <code class="font-mono text-xs bg-[oklch(94%_0.003_260)] px-1.5 py-0.5">get_history</code>,
+          spots trends, and flags drops. Pay-per-use means the agent decides how often to check
+          based on what matters &mdash; not on what your subscription tier allows.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%!-- Section 6: Pricing --%>
+<div class="py-20 px-6 border-t border-[oklch(92%_0.003_260)]" id="pricing">
+  <div class="max-w-3xl mx-auto text-center">
+    <span class="section-label reveal">Pricing</span>
+    <div class="mt-6 reveal price-reveal">
+      <span class="font-mono text-6xl md:text-7xl font-bold text-[oklch(8%_0.005_260)] tracking-tight">$0.0024</span>
+      <span class="font-mono text-xl text-[oklch(50%_0.005_260)]">/check</span>
+    </div>
+    <p class="font-mono text-sm text-[oklch(45%_0.005_260)] mt-5 reveal">
+      No subscription. No monthly fee. No minimum spend.
+    </p>
+
+    <div class="inline-block border border-[oklch(88%_0.005_260)] p-5 mt-8 reveal">
+      <div class="font-mono text-xs text-[oklch(50%_0.005_260)] space-y-1.5 text-left">
+        <p>10 keywords &times; 5 countries &times; daily = 50 checks/day</p>
+        <p>50 checks/day &times; 30 days = 1,500 checks/month</p>
+        <p class="text-[oklch(35%_0.005_260)] font-medium pt-1">= $3.60/month</p>
+      </div>
+    </div>
+
+    <p class="font-mono text-sm text-[oklch(42%_0.16_155)] mt-6 font-medium reveal">
+      $10 gets you ~4,100 rank checks
+    </p>
+
+    <div class="mt-10 reveal">
+      <%= if @current_user do %>
+        <.link navigate={~p"/dashboard"} class="btn-action btn-action-primary inline-block px-8 py-3">
+          Go to Dashboard
+        </.link>
+      <% else %>
+        <.link href={~p"/auth/login"} class="btn-action btn-action-primary inline-block px-8 py-3">
+          Start Tracking
+        </.link>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%!-- Section 7: Compatibility --%>
+<div class="py-16 px-6 border-t border-[oklch(92%_0.003_260)]" id="compatible">
+  <div class="max-w-4xl mx-auto text-center">
+    <span class="section-label reveal">Compatible With</span>
+    <div class="flex flex-wrap justify-center gap-3 mt-6 reveal">
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">Claude Desktop</span>
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">Cursor</span>
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">VS Code</span>
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">Windsurf</span>
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">Claude Code</span>
+      <span class="compat-pill font-mono text-xs px-4 py-2 border border-[oklch(85%_0.005_260)] text-[oklch(35%_0.005_260)]">Any MCP Client</span>
+    </div>
+    <p class="text-sm text-[oklch(50%_0.005_260)] mt-5 reveal">
+      Connect in under 30 seconds. Works with any OAuth-compatible MCP client.
+    </p>
+  </div>
+</div>
+
+<%!-- Section 8: Final CTA --%>
+<div class="py-24 px-6 border-t border-[oklch(92%_0.003_260)]">
+  <div class="max-w-2xl mx-auto text-center">
+    <h2 class="text-3xl font-light text-[oklch(10%_0.005_260)] tracking-tight reveal">
+      Stop paying for tools you don't need
+    </h2>
+    <p class="text-base text-[oklch(45%_0.005_260)] mt-4 leading-relaxed reveal">
+      Your AI agent just needs to check positions. Give it the right tool.
+    </p>
+    <div class="mt-8 reveal">
+      <%= if @current_user do %>
+        <.link navigate={~p"/dashboard"} class="btn-action btn-action-primary inline-block px-8 py-3">
+          Dashboard
+        </.link>
+      <% else %>
+        <.link href={~p"/auth/login"} class="btn-action btn-action-primary inline-block px-8 py-3">
+          Get Started Free
+        </.link>
+      <% end %>
+    </div>
+    <p class="font-mono text-xs text-[oklch(60%_0.005_260)] mt-4 reveal">
+      Free to sign in. Pay only when you check.
+    </p>
+  </div>
+</div>
+
+<%!-- Section 9: Footer --%>
+<div class="px-6 pb-8">
+  <hr class="dotted-separator max-w-5xl mx-auto" />
+  <div class="max-w-5xl mx-auto flex items-center justify-between pt-6">
+    <span class="font-mono text-xs text-[oklch(55%_0.005_260)]">
+      SEO Rank Tracker
+    </span>
+    <span class="font-mono text-xs text-[oklch(65%_0.005_260)]">
+      Built with Elixir + Phoenix
+    </span>
   </div>
 </div>
