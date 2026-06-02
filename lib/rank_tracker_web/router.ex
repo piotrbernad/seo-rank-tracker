@@ -39,6 +39,7 @@ defmodule RankTrackerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/sitemap.xml", PageController, :sitemap
     get "/auth/login", AuthController, :login
     get "/auth/callback", AuthController, :callback
     delete "/auth/logout", AuthController, :logout

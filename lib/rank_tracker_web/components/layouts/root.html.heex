@@ -4,7 +4,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="SEO Rank Tracker" phx-no-format>{assigns[:page_title]}</.live_title>
+    <.live_title default="SEO Rank Tracker — The Simplest SEO MCP for AI Agents" phx-no-format>{assigns[:page_title]}</.live_title>
+    <meta name="description" content={assigns[:meta_description] || "SEO Rank Tracker is the simplest MCP server for AI agents to check Google search positions. Add domains, manage keywords, track rankings across 35+ countries. Pay-per-use, no subscription."} />
+    <link rel="canonical" href={assigns[:canonical_url] || "https://seo-rank-tracker.fly.dev/"} />
+
+    <%!-- Open Graph --%>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SEO Rank Tracker" />
+    <meta property="og:title" content={assigns[:og_title] || "SEO Rank Tracker — The Simplest SEO MCP for AI Agents"} />
+    <meta property="og:description" content={assigns[:og_description] || "MCP server for AI agents to check Google rankings. Add domains, track keywords, monitor positions across 35+ countries. $0.0024/check, no subscription."} />
+    <meta property="og:url" content={assigns[:canonical_url] || "https://seo-rank-tracker.fly.dev/"} />
+
+    <%!-- Twitter Card --%>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={assigns[:og_title] || "SEO Rank Tracker — The Simplest SEO MCP for AI Agents"} />
+    <meta name="twitter:description" content={assigns[:og_description] || "MCP server for AI agents to check Google rankings. Add domains, track keywords, monitor positions across 35+ countries. $0.0024/check, no subscription."} />
+
+    <%!-- Additional SEO --%>
+    <meta name="robots" content={assigns[:meta_robots] || "index, follow"} />
+    <meta name="author" content="SEO Rank Tracker" />
+    <meta name="theme-color" content="#1a1a1a" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,6 +34,10 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
+
+    <%= if assigns[:json_ld] do %>
+      {Phoenix.HTML.raw("<script type=\"application/ld+json\">#{@json_ld}</script>")}
+    <% end %>
   </head>
   <body class="min-h-screen">
     {@inner_content}
